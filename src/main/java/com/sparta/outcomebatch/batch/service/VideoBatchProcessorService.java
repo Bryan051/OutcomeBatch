@@ -1,8 +1,6 @@
 package com.sparta.outcomebatch.batch.service;//package com.sparta.outcomebatch.batch.service;
 
-import com.sparta.outcomebatch.dto.BatchVideoRequestDto;
 import com.sparta.outcomebatch.entity.Video;
-import com.sparta.outcomebatch.repository.AdRepository;
 import com.sparta.outcomebatch.repository.VideoRepository;
 import com.sparta.outcomebatch.repository.VideoViewRepository;
 import jakarta.transaction.Transactional;
@@ -10,15 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class VideoBatchProcessorService {
 
     private final VideoViewRepository videoViewRepository;
-    private final VideoRepository videoRepository;
+//    private final VideoRepository videoRepository;
 
     // video Stats
     @Transactional

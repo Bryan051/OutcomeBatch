@@ -30,38 +30,38 @@ public class VideoBatchConfig {
     private final EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public Job createStatisticsJob(JobRepository jobRepository, Step step1, Step step2) {
-        return new JobBuilder("createStatisticsJob", jobRepository)
+    public Job createVideoBatchJob(JobRepository jobRepository, Step videoStats, Step videoRev) {
+        return new JobBuilder("CreateVideoBatchJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(step1)
-                .next(step2)
+                .start(videoStats)
+                .next(videoRev)
                 .build();
     }
 
     @Bean
-    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<Video> reader, VideoBatchProcessor videoBatchProcessor, JpaItemWriter<VideoStats> writer) {
-        return new StepBuilder("step1", jobRepository)
+    public Step videoStats(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                      JpaPagingItemReader<Video> videoReader, VideoBatchProcessor videoBatchProcessor, JpaItemWriter<VideoStats> videoStatsJpaItemWriter) {
+        return new StepBuilder("videoStats", jobRepository)
                 .<Video, VideoStats>chunk(10, transactionManager)
-                .reader(reader)
+                .reader(videoReader)
                 .processor(videoBatchProcessor)
-                .writer(writer)
+                .writer(videoStatsJpaItemWriter)
                 .build();
     }
 
     @Bean
-    public Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<Video> reader, VideoRevProcessor videoRevProcessor, JpaItemWriter<VideoRev> writer) {
-        return new StepBuilder("step2", jobRepository)
+    public Step videoRev(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                      JpaPagingItemReader<Video> videoReader, VideoRevProcessor videoRevProcessor, JpaItemWriter<VideoRev> videoRevJpaItemWriter) {
+        return new StepBuilder("videoRev", jobRepository)
                 .<Video, VideoRev>chunk(10, transactionManager)
-                .reader(reader)
+                .reader(videoReader)
                 .processor(videoRevProcessor)
-                .writer(writer)
+                .writer(videoRevJpaItemWriter)
                 .build();
     }
 
     @Bean
-    public JpaPagingItemReader<Video> reader() {
+    public JpaPagingItemReader<Video> videoReader() {
         return new JpaPagingItemReaderBuilder<Video>()
                 .name("videoReader")
                 .entityManagerFactory(entityManagerFactory)
@@ -71,14 +71,14 @@ public class VideoBatchConfig {
     }
 
     @Bean
-    public JpaItemWriter<VideoStats> writer() {
+    public JpaItemWriter<VideoStats> videoStatsJpaItemWriter() {
         JpaItemWriter<VideoStats> jpaItemWriter = new JpaItemWriter<>();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
         return jpaItemWriter;
     }
 
     @Bean
-    public JpaItemWriter<VideoRev> writer2() {
+    public JpaItemWriter<VideoRev> videoRevJpaItemWriter() {
         JpaItemWriter<VideoRev> jpaItemWriter = new JpaItemWriter<>();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
         return jpaItemWriter;

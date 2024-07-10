@@ -18,8 +18,8 @@ public class VideoRevProcessor implements ItemProcessor<Video, VideoRev> {
 
     @Override
     public VideoRev process(Video video) throws Exception {
-//        LocalDate date = LocalDate.now();
-        LocalDate date = LocalDate.of(2024, 7, 9);
+        LocalDate date = LocalDate.now();
+//        LocalDate date = LocalDate.of(2024, 7, 9);
         // 오늘 계산값
         int dailyView = videoBatchProcessorService.countVideoViewsExcludingUser(video, date);
 

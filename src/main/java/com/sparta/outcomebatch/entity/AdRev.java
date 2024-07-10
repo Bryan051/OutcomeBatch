@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -24,7 +25,7 @@ public class AdRev {
 
     private LocalDate date;
 
-    private Long adRevenue;
+    private BigDecimal adRevenue;
 
 
     private Long videoAdId;
