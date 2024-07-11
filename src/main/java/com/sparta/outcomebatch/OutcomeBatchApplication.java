@@ -27,7 +27,6 @@ public class OutcomeBatchApplication {
         SpringApplication.run(OutcomeBatchApplication.class, args);
     }
 
-
     @Bean
     public CommandLineRunner run() {
         return args -> {
