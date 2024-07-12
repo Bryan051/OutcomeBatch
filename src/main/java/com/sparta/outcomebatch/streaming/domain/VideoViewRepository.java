@@ -1,8 +1,8 @@
-package com.sparta.outcomebatch.repository;
+package com.sparta.outcomebatch.streaming.domain;
 
-import com.sparta.outcomebatch.entity.User;
-import com.sparta.outcomebatch.entity.Video;
-import com.sparta.outcomebatch.entity.VideoView;
+import com.sparta.outcomebatch.streaming.domain.User;
+import com.sparta.outcomebatch.streaming.domain.Video;
+import com.sparta.outcomebatch.streaming.domain.VideoView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,7 +1,7 @@
-package com.sparta.outcomebatch.repository;
+package com.sparta.outcomebatch.streaming.domain;
 
-import com.sparta.outcomebatch.entity.AdView;
-import com.sparta.outcomebatch.entity.VideoAd;
+import com.sparta.outcomebatch.streaming.domain.AdView;
+import com.sparta.outcomebatch.streaming.domain.VideoAd;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

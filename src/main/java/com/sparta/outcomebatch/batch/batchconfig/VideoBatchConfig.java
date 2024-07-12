@@ -1,10 +1,10 @@
-package com.sparta.outcomebatch.batch.config;//package com.sparta.outcome.batch.config;
+package com.sparta.outcomebatch.batch.batchconfig;//package com.sparta.outcome.batch.config;
 
 import com.sparta.outcomebatch.batch.VideoBatchProcessor;
 import com.sparta.outcomebatch.batch.VideoRevProcessor;
-import com.sparta.outcomebatch.entity.Video;
-import com.sparta.outcomebatch.entity.VideoRev;
-import com.sparta.outcomebatch.entity.VideoStats;
+import com.sparta.outcomebatch.streaming.domain.Video;
+import com.sparta.outcomebatch.batch.domain.VideoRev;
+import com.sparta.outcomebatch.batch.domain.VideoStats;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

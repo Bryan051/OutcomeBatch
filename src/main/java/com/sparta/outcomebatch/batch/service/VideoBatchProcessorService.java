@@ -1,8 +1,7 @@
 package com.sparta.outcomebatch.batch.service;//package com.sparta.outcomebatch.batch.service;
 
-import com.sparta.outcomebatch.entity.Video;
-import com.sparta.outcomebatch.repository.VideoRepository;
-import com.sparta.outcomebatch.repository.VideoViewRepository;
+import com.sparta.outcomebatch.streaming.domain.Video;
+import com.sparta.outcomebatch.streaming.domain.VideoViewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

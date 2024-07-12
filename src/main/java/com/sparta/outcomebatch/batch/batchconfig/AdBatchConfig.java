@@ -1,10 +1,10 @@
-package com.sparta.outcomebatch.batch.config;
+package com.sparta.outcomebatch.batch.batchconfig;
 
 import com.sparta.outcomebatch.batch.AdBatchProcessor;
 import com.sparta.outcomebatch.batch.AdRevProcessor;
-import com.sparta.outcomebatch.entity.AdRev;
-import com.sparta.outcomebatch.entity.AdStats;
-import com.sparta.outcomebatch.entity.VideoAd;
+import com.sparta.outcomebatch.batch.domain.AdRev;
+import com.sparta.outcomebatch.batch.domain.AdStats;
+import com.sparta.outcomebatch.streaming.domain.VideoAd;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

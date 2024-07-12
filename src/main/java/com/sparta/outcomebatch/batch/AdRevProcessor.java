@@ -1,8 +1,8 @@
 package com.sparta.outcomebatch.batch;
 
 import com.sparta.outcomebatch.batch.service.AdBatchProcessorService;
-import com.sparta.outcomebatch.entity.AdRev;
-import com.sparta.outcomebatch.entity.VideoAd;
+import com.sparta.outcomebatch.batch.domain.AdRev;
+import com.sparta.outcomebatch.streaming.domain.VideoAd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;

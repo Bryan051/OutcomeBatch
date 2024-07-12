@@ -1,4 +1,4 @@
-package com.sparta.outcomebatch.entity;
+package com.sparta.outcomebatch.batch.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -17,22 +16,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class AdRev {
-
+public class VideoStats {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate date;
 
-    private BigDecimal adRevenue;
+    private int videoView;
 
+    private Long playTime;
 
-    private Long videoAdId;
+    private Long videoId;
 
-//    private Long videoId;
-//
-//    private Long adId;
-
-
+    // getters and setters
 }

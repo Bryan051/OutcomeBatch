@@ -1,4 +1,4 @@
-package com.sparta.outcomebatch.entity;
+package com.sparta.outcomebatch.streaming.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "Ad")
-@Table(name = "Ad")
-public class Ad {
+@Entity
+@Table(name = "ad_view")
+public class AdView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +23,8 @@ public class Ad {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "ad")
-    private List<VideoAd> videoAds = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "video_ad_id", nullable = false)
+    private VideoAd videoAd;
 
-//    @OneToMany(mappedBy = "ad")
-//    private List<DailyStats> dailyStats = new ArrayList<>();
 }

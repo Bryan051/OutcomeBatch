@@ -1,8 +1,8 @@
 package com.sparta.outcomebatch.batch.service;
 
-import com.sparta.outcomebatch.entity.VideoAd;
-import com.sparta.outcomebatch.repository.AdViewRepository;
-import com.sparta.outcomebatch.repository.VideoAdRepository;
+import com.sparta.outcomebatch.streaming.domain.VideoAd;
+import com.sparta.outcomebatch.streaming.domain.AdViewRepository;
+import com.sparta.outcomebatch.streaming.domain.VideoAdRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
