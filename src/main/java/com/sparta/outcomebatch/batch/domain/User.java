@@ -1,4 +1,4 @@
-package com.sparta.outcomebatch.streaming.domain;
+package com.sparta.outcomebatch.batch.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,10 +15,14 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "user_email")
     private String userEmail;
 
+    @Column(name = "user_name")
     private String userName;
 
     private String password;

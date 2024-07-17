@@ -1,4 +1,4 @@
-package com.sparta.outcomebatch.streaming.domain;
+package com.sparta.outcomebatch.batch.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "Ad")
-@Table(name = "Ad")
+@Entity
+@Table(name = "ad")
 public class Ad {
 
     @Id

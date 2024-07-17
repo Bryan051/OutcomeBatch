@@ -4,7 +4,7 @@ import com.sparta.outcomebatch.batch.AdBatchProcessor;
 import com.sparta.outcomebatch.batch.AdRevProcessor;
 import com.sparta.outcomebatch.batch.domain.AdRev;
 import com.sparta.outcomebatch.batch.domain.AdStats;
-import com.sparta.outcomebatch.streaming.domain.VideoAd;
+import com.sparta.outcomebatch.batch.domain.VideoAd;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
@@ -28,6 +29,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class AdBatchConfig {
 
     private final EntityManagerFactory entityManagerFactory;
+    private final LocalContainerEntityManagerFactoryBean batchEntityManagerFactory;
+    private final LocalContainerEntityManagerFactoryBean streamingEntityManagerFactory;
 
     @Bean
     public Job createAdBatchJob(JobRepository jobRepository, Step adStats, Step adRev) {
@@ -64,7 +67,7 @@ public class AdBatchConfig {
     public JpaPagingItemReader<VideoAd> videoAdJpaPagingItemReader() {
         return new JpaPagingItemReaderBuilder<VideoAd>()
                 .name("VideoAdReader")
-                .entityManagerFactory(entityManagerFactory)
+                .entityManagerFactory(streamingEntityManagerFactory.getObject())
                 .queryString("SELECT v FROM VideoAd v")
                 .pageSize(10)
                 .build();
@@ -73,14 +76,14 @@ public class AdBatchConfig {
     @Bean
     public JpaItemWriter<AdStats> adStatsJpaItemWriter() {
         JpaItemWriter<AdStats> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
         return jpaItemWriter;
     }
 
     @Bean
     public JpaItemWriter<AdRev> adRevJpaItemWriter() {
         JpaItemWriter<AdRev> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
         return jpaItemWriter;
     }
 

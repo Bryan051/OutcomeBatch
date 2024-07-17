@@ -2,7 +2,7 @@ package com.sparta.outcomebatch.batch;
 
 import com.sparta.outcomebatch.batch.service.AdBatchProcessorService;
 import com.sparta.outcomebatch.batch.domain.AdRev;
-import com.sparta.outcomebatch.streaming.domain.VideoAd;
+import com.sparta.outcomebatch.batch.domain.VideoAd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class AdRevProcessor implements ItemProcessor<VideoAd, AdRev> {
         AdRev adRev = new AdRev();
         adRev.setDate(date);
         adRev.setVideoAdId(videoAd.getId());
-        adRev.setAdRevenue(BigDecimal.valueOf(revenue));
+        adRev.setAdRevenue((long) revenue);
 
         return adRev;
     }

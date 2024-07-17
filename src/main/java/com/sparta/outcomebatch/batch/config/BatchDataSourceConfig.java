@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.sparta.outcomebatch.batch.domain",
+        basePackages = "com.sparta.outcomebatch.batch.domain.write", // 레포지토리가 위치한 패키지
         entityManagerFactoryRef = "batchEntityManagerFactory",
         transactionManagerRef = "batchTransactionManager"
 )
@@ -31,12 +31,12 @@ public class BatchDataSourceConfig {
             @Qualifier("batchDataSource") DataSource batchDataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(batchDataSource);
-        em.setPackagesToScan("com.sparta.outcomebatch.batch.domain");
+        em.setPackagesToScan("com.sparta.outcomebatch.batch.domain");// 엔티티가 위치한 패키지
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         HashMap<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", "none");// 절대 update 를 하지마
         properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        properties.put("hibernate.hbm2ddl.auto", "update");
         em.setJpaPropertyMap(properties);
 
         return em;

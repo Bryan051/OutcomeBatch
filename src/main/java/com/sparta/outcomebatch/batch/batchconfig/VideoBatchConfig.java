@@ -2,7 +2,7 @@ package com.sparta.outcomebatch.batch.batchconfig;//package com.sparta.outcome.b
 
 import com.sparta.outcomebatch.batch.VideoBatchProcessor;
 import com.sparta.outcomebatch.batch.VideoRevProcessor;
-import com.sparta.outcomebatch.streaming.domain.Video;
+import com.sparta.outcomebatch.batch.domain.Video;
 import com.sparta.outcomebatch.batch.domain.VideoRev;
 import com.sparta.outcomebatch.batch.domain.VideoStats;
 import jakarta.persistence.EntityManagerFactory;
@@ -19,6 +19,7 @@ import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
@@ -28,6 +29,8 @@ public class VideoBatchConfig {
 
 
     private final EntityManagerFactory entityManagerFactory;
+    private final LocalContainerEntityManagerFactoryBean batchEntityManagerFactory;
+    private final LocalContainerEntityManagerFactoryBean streamingEntityManagerFactory;
 
     @Bean
     public Job createVideoBatchJob(JobRepository jobRepository, Step videoStats, Step videoRev) {
@@ -64,7 +67,7 @@ public class VideoBatchConfig {
     public JpaPagingItemReader<Video> videoReader() {
         return new JpaPagingItemReaderBuilder<Video>()
                 .name("videoReader")
-                .entityManagerFactory(entityManagerFactory)
+                .entityManagerFactory(streamingEntityManagerFactory.getObject())
                 .queryString("SELECT v FROM Video v")
                 .pageSize(10)
                 .build();
@@ -73,14 +76,14 @@ public class VideoBatchConfig {
     @Bean
     public JpaItemWriter<VideoStats> videoStatsJpaItemWriter() {
         JpaItemWriter<VideoStats> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
         return jpaItemWriter;
     }
 
     @Bean
     public JpaItemWriter<VideoRev> videoRevJpaItemWriter() {
         JpaItemWriter<VideoRev> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
         return jpaItemWriter;
     }
 

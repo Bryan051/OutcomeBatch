@@ -1,4 +1,4 @@
-package com.sparta.outcomebatch.streaming.domain;
+package com.sparta.outcomebatch.batch.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

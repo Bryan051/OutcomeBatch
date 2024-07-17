@@ -1,7 +1,7 @@
 package com.sparta.outcomebatch.batch;
 
 import com.sparta.outcomebatch.batch.service.VideoBatchProcessorService;
-import com.sparta.outcomebatch.streaming.domain.Video;
+import com.sparta.outcomebatch.batch.domain.Video;
 import com.sparta.outcomebatch.batch.domain.VideoRev;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
@@ -21,7 +21,7 @@ public class VideoRevProcessor implements ItemProcessor<Video, VideoRev> {
         LocalDate date = LocalDate.now();
 //        LocalDate date = LocalDate.of(2024, 7, 9);
         // 오늘 계산값
-        int dailyView = videoBatchProcessorService.countVideoViewsExcludingUser(video, date);
+        int dailyView = videoBatchProcessorService.countVideoViewsExcludingUserAndDate(video, date);
 
         // 어제까지 총합
         int lastTotalView = video.getTotalVideoView();

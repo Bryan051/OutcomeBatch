@@ -1,7 +1,7 @@
 package com.sparta.outcomebatch.batch.service;//package com.sparta.outcomebatch.batch.service;
 
-import com.sparta.outcomebatch.streaming.domain.Video;
-import com.sparta.outcomebatch.streaming.domain.VideoViewRepository;
+import com.sparta.outcomebatch.batch.domain.Video;
+import com.sparta.outcomebatch.batch.domain.read.VideoViewReadRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,18 +12,18 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class VideoBatchProcessorService {
 
-    private final VideoViewRepository videoViewRepository;
+    private final VideoViewReadRepository videoViewReadRepository;
 //    private final VideoRepository videoRepository;
 
     // video Stats
     @Transactional
-    public int countVideoViewsExcludingUser(Video video, LocalDate date) {
-        return videoViewRepository.countVideoViewsExcludingUserAndDate(video, date);
+    public int countVideoViewsExcludingUserAndDate(Video video, LocalDate date) {
+        return videoViewReadRepository.countVideoViewsExcludingUserAndDate(video, date);
     }
 
     @Transactional
     public Long sumVideoViewDurationsExcludingUserAndDate(Video video, LocalDate date) {
-        return videoViewRepository.sumVideoViewDurationsExcludingUserAndDate(video, date);
+        return videoViewReadRepository.sumVideoViewDurationsExcludingUserAndDate(video, date);
     }
 
     public double calculateRevenue(int lastTotalView, int dailyView) {

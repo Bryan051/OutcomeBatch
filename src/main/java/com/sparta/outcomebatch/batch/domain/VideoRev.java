@@ -1,9 +1,6 @@
 package com.sparta.outcomebatch.batch.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "video_rev")
 public class VideoRev {
 
     @Id
@@ -25,8 +23,10 @@ public class VideoRev {
 
     private LocalDate date;
 
+    @Column(name = "video_id")
     private Long videoId;
 
+    @Column(name = "video_revenue")
     private BigDecimal videoRevenue;
 
 }

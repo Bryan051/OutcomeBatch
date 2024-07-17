@@ -1,11 +1,11 @@
 package com.sparta.outcomebatch.batch.service;
 
-import com.sparta.outcomebatch.streaming.domain.VideoAd;
-import com.sparta.outcomebatch.streaming.domain.AdViewRepository;
-import com.sparta.outcomebatch.streaming.domain.VideoAdRepository;
-import jakarta.transaction.Transactional;
+import com.sparta.outcomebatch.batch.domain.VideoAd;
+import com.sparta.outcomebatch.batch.domain.read.AdViewReadRepository;
+import com.sparta.outcomebatch.batch.domain.read.VideoAdReadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -15,13 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdBatchProcessorService {
 
-    public final VideoAdRepository videoAdRepository;
-    private final AdViewRepository adViewRepository;
+    public final VideoAdReadRepository videoAdReadRepository;
+    private final AdViewReadRepository adViewReadRepository;
 
     @Transactional
     public int countAdViewsByVideoAdAndDate(VideoAd videoAd, LocalDate date) {
         List<VideoAd> videoAds = Collections.singletonList(videoAd);
-        return (int) adViewRepository.countByVideoAdsAndDate(videoAds, date);
+        return (int) adViewReadRepository.countByVideoAdsAndDate(videoAds, date);
     }
 
     public double calculateRevenue(int lastTotalView, int adViewCount) {
