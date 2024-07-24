@@ -49,6 +49,9 @@ public class Video {
     @OneToMany(mappedBy = "video")
     private List<VideoAd> videoAds = new ArrayList<>();
 
+    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
+    private List<VideoView> videoViews;
+
 
     // getters and setters
 }

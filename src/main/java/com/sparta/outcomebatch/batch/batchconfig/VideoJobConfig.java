@@ -11,31 +11,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class VideoBatchConfig {
+public class VideoJobConfig {
 
 
     private final EntityManagerFactory entityManagerFactory;
-    private final LocalContainerEntityManagerFactoryBean batchEntityManagerFactory;
-    private final LocalContainerEntityManagerFactoryBean streamingEntityManagerFactory;
+    private final VideoBatchProcessor videoBatchProcessor;
+    private final VideoRevProcessor videoRevProcessor;
+    private final CustomJobListener customJobListener;
+    private final CustomStepListener customStepListener;
+
+    @Autowired
+    @Qualifier("streamingEntityManagerFactory")
+    private EntityManagerFactory streamingEntityManagerFactory;
+
+    @Autowired
+    @Qualifier("batchEntityManagerFactory")
+    private EntityManagerFactory batchEntityManagerFactory;
 
     @Bean
     public Job createVideoBatchJob(JobRepository jobRepository, Step videoStats, Step videoRev) {
         return new JobBuilder("CreateVideoBatchJob", jobRepository)
-                .incrementer(new RunIdIncrementer())
+                .preventRestart()
+                .listener(customJobListener)
                 .start(videoStats)
                 .next(videoRev)
                 .build();
@@ -43,23 +55,27 @@ public class VideoBatchConfig {
 
     @Bean
     public Step videoStats(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<Video> videoReader, VideoBatchProcessor videoBatchProcessor, JpaItemWriter<VideoStats> videoStatsJpaItemWriter) {
+                           @Qualifier("batchTaskExecutor") TaskExecutor taskExecutor) {
         return new StepBuilder("videoStats", jobRepository)
                 .<Video, VideoStats>chunk(10, transactionManager)
-                .reader(videoReader)
+                .listener(customStepListener)
+                .taskExecutor(taskExecutor)
+                .reader(videoReader())
                 .processor(videoBatchProcessor)
-                .writer(videoStatsJpaItemWriter)
+                .writer(videoStatsJpaItemWriter())
                 .build();
     }
 
     @Bean
     public Step videoRev(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<Video> videoReader, VideoRevProcessor videoRevProcessor, JpaItemWriter<VideoRev> videoRevJpaItemWriter) {
+                         @Qualifier("batchTaskExecutor") TaskExecutor taskExecutor) {
         return new StepBuilder("videoRev", jobRepository)
                 .<Video, VideoRev>chunk(10, transactionManager)
-                .reader(videoReader)
+                .listener(customStepListener)
+                .taskExecutor(taskExecutor)
+                .reader(videoReader())
                 .processor(videoRevProcessor)
-                .writer(videoRevJpaItemWriter)
+                .writer(videoRevJpaItemWriter())
                 .build();
     }
 
@@ -67,7 +83,9 @@ public class VideoBatchConfig {
     public JpaPagingItemReader<Video> videoReader() {
         return new JpaPagingItemReaderBuilder<Video>()
                 .name("videoReader")
-                .entityManagerFactory(streamingEntityManagerFactory.getObject())
+                .entityManagerFactory(streamingEntityManagerFactory)
+//                .queryString("SELECT DISTINCT v FROM Video v LEFT JOIN FETCH v.videoViews vv WHERE FUNCTION('DATE', vv.createdAt) = :date")
+//                .parameterValues(Collections.singletonMap("date", LocalDate.of(2024,7,17)))
                 .queryString("SELECT v FROM Video v")
                 .pageSize(10)
                 .build();
@@ -76,15 +94,30 @@ public class VideoBatchConfig {
     @Bean
     public JpaItemWriter<VideoStats> videoStatsJpaItemWriter() {
         JpaItemWriter<VideoStats> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory);
         return jpaItemWriter;
     }
 
     @Bean
     public JpaItemWriter<VideoRev> videoRevJpaItemWriter() {
         JpaItemWriter<VideoRev> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory);
         return jpaItemWriter;
     }
 
+
+
+
+
+
 }
+
+
+//    @Bean
+//    public Job createVideoBatchJob(JobRepository jobRepository, Step videoStats, Step videoRev) {
+//        return new JobBuilder("CreateVideoBatchJob", jobRepository)
+//                .incrementer(new RunIdIncrementer())
+//                .start(videoStats)
+//                .next(videoRev)
+//                .build();
+//    }

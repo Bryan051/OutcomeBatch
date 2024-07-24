@@ -11,31 +11,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class AdBatchConfig {
+public class AdJobConfig {
 
     private final EntityManagerFactory entityManagerFactory;
-    private final LocalContainerEntityManagerFactoryBean batchEntityManagerFactory;
-    private final LocalContainerEntityManagerFactoryBean streamingEntityManagerFactory;
+    private final AdBatchProcessor adBatchProcessor;
+    private final AdRevProcessor adRevProcessor;
+    private final CustomStepListener customStepListener;
+    private final CustomJobListener customJobListener;
+
+    @Autowired
+    @Qualifier("streamingEntityManagerFactory")
+    private EntityManagerFactory streamingEntityManagerFactory;
+
+    @Autowired
+    @Qualifier("batchEntityManagerFactory")
+    private EntityManagerFactory batchEntityManagerFactory;
 
     @Bean
     public Job createAdBatchJob(JobRepository jobRepository, Step adStats, Step adRev) {
         return new JobBuilder("CreateAdBatchJob", jobRepository)
-                .incrementer(new RunIdIncrementer())
+                .preventRestart()
+                .listener(customJobListener)
                 .start(adStats)
                 .next(adRev)
                 .build();
@@ -43,23 +55,27 @@ public class AdBatchConfig {
 
     @Bean
     public Step adStats(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<VideoAd> videoAdJpaPagingItemReader, AdBatchProcessor adBatchProcessor, JpaItemWriter<AdStats> adStatsJpaItemWriter) {
+                        @Qualifier("batchTaskExecutor") TaskExecutor taskExecutor) {
         return new StepBuilder("adStats", jobRepository)
                 .<VideoAd, AdStats>chunk(10, transactionManager)
-                .reader(videoAdJpaPagingItemReader)
+                .listener(customStepListener)
+                .taskExecutor(taskExecutor)
+                .reader(videoAdJpaPagingItemReader())
                 .processor(adBatchProcessor)
-                .writer(adStatsJpaItemWriter)
+                .writer(adStatsJpaItemWriter())
                 .build();
     }
 
     @Bean
     public Step adRev(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                      JpaPagingItemReader<VideoAd> videoAdJpaPagingItemReader, AdRevProcessor adRevProcessor, JpaItemWriter<AdRev> adRevJpaItemWriter) {
+                      @Qualifier("batchTaskExecutor") TaskExecutor taskExecutor) {
         return new StepBuilder("adRev", jobRepository)
                 .<VideoAd, AdRev>chunk(10, transactionManager)
-                .reader(videoAdJpaPagingItemReader)
+                .listener(customStepListener)
+                .taskExecutor(taskExecutor)
+                .reader(videoAdJpaPagingItemReader())
                 .processor(adRevProcessor)
-                .writer(adRevJpaItemWriter)
+                .writer(adRevJpaItemWriter())
                 .build();
     }
 
@@ -67,7 +83,7 @@ public class AdBatchConfig {
     public JpaPagingItemReader<VideoAd> videoAdJpaPagingItemReader() {
         return new JpaPagingItemReaderBuilder<VideoAd>()
                 .name("VideoAdReader")
-                .entityManagerFactory(streamingEntityManagerFactory.getObject())
+                .entityManagerFactory(streamingEntityManagerFactory)
                 .queryString("SELECT v FROM VideoAd v")
                 .pageSize(10)
                 .build();
@@ -76,15 +92,16 @@ public class AdBatchConfig {
     @Bean
     public JpaItemWriter<AdStats> adStatsJpaItemWriter() {
         JpaItemWriter<AdStats> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory);
         return jpaItemWriter;
     }
 
     @Bean
     public JpaItemWriter<AdRev> adRevJpaItemWriter() {
         JpaItemWriter<AdRev> jpaItemWriter = new JpaItemWriter<>();
-        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory.getObject());
+        jpaItemWriter.setEntityManagerFactory(batchEntityManagerFactory);
         return jpaItemWriter;
     }
+
 
 }

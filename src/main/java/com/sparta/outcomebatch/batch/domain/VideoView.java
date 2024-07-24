@@ -41,6 +41,11 @@ public class VideoView {
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate createdAt;
 
+    // 배치에서 Video 엔티티의 videoViews 컬렉션사용, 필터링을 할 수 있다.
+    @ManyToOne
+    @JoinColumn(name = "vid_id", nullable = false, insertable = false, updatable = false)
+    private Video video;
+
 
 //    public VideoView(User user, Video video, VideoRequestDto videoRequestDto, LocalDate date) {
 //        this.userId = user;
