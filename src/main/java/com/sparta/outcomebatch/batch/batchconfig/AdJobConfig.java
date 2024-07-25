@@ -86,6 +86,7 @@ public class AdJobConfig {
                 .entityManagerFactory(streamingEntityManagerFactory)
                 .queryString("SELECT v FROM VideoAd v")
                 .pageSize(10)
+                .saveState(false)
                 .build();
     }
 

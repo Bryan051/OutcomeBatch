@@ -88,6 +88,7 @@ public class VideoJobConfig {
 //                .parameterValues(Collections.singletonMap("date", LocalDate.of(2024,7,17)))
                 .queryString("SELECT v FROM Video v")
                 .pageSize(10)
+                .saveState(false)
                 .build();
     }
 

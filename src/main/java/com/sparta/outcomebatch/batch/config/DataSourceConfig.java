@@ -10,6 +10,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @Slf4j
@@ -64,10 +65,19 @@ public class DataSourceConfig {
     @Bean(name = "batchTaskExecutor")
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(8); // m1 cpu 수
-        executor.setQueueCapacity(500);
+
+        int numOfCores = Runtime.getRuntime().availableProcessors();
+        float targetCpuUtilization = 0.7f;
+        float blockingCoefficient = 1.0f;
+        int corePoolSize = (int) (numOfCores * targetCpuUtilization * (1 + blockingCoefficient));
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(Integer.MAX_VALUE);
+        executor.setQueueCapacity(Integer.MAX_VALUE);
         executor.setThreadNamePrefix("batchTaskExecutor-");
+        // shutdown 상태가 아니라면 ThreadPoolTaskExecutor에 요청한 thread에서 직접 처리한다.
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 유실 없이 마지막까지 다 처리하고 종료되길 원한다면 설정을 추가해야 한다.
+        executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
         log.info("Initialized ThreadPoolTaskExecutor with core pool size: {}, max pool size: {}",
                 executor.getCorePoolSize(), executor.getMaxPoolSize());
