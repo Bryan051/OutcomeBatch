@@ -16,8 +16,8 @@ import java.util.List;
 public interface AdViewReadRepository extends JpaRepository<AdView,Long> {
 
     // 일 광고 뷰 조회
-    @Query("SELECT COUNT(a) FROM AdView a WHERE a.videoAd IN :videoAds AND a.createdAt = :date")
-    long countByVideoAdsAndDate(@Param("videoAds") List<VideoAd> videoAds, @Param("date") LocalDate date);
+    @Query("SELECT COUNT(a) FROM AdView a WHERE a.videoAd IN :videoAds AND a.createdAt >= :startDate AND a.createdAt < :endDate")
+    long countByVideoAdsAndDate(@Param("videoAds") List<VideoAd> videoAds, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
 }

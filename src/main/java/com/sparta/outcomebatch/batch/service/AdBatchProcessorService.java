@@ -19,9 +19,9 @@ public class AdBatchProcessorService {
     private final AdViewReadRepository adViewReadRepository;
 
     @Transactional
-    public int countAdViewsByVideoAdAndDate(VideoAd videoAd, LocalDate date) {
+    public int countAdViewsByVideoAdAndDate(VideoAd videoAd, LocalDate startDate, LocalDate endDate) {
         List<VideoAd> videoAds = Collections.singletonList(videoAd);
-        return (int) adViewReadRepository.countByVideoAdsAndDate(videoAds, date);
+        return (int) adViewReadRepository.countByVideoAdsAndDate(videoAds, startDate, endDate);
     }
 
     public double calculateRevenue(int lastTotalView, int adViewCount) {

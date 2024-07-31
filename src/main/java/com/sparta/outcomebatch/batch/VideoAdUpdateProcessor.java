@@ -1,23 +1,27 @@
 package com.sparta.outcomebatch.batch;
 
-import com.sparta.outcomebatch.batch.service.AdBatchProcessorService;
-import com.sparta.outcomebatch.batch.domain.AdRev;
+import com.sparta.outcomebatch.batch.domain.Video;
 import com.sparta.outcomebatch.batch.domain.VideoAd;
+import com.sparta.outcomebatch.batch.service.AdBatchProcessorService;
+import com.sparta.outcomebatch.batch.service.VideoBatchProcessorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class AdRevProcessor implements ItemProcessor<VideoAd, AdRev> {
+public class VideoAdUpdateProcessor implements ItemProcessor<VideoAd, VideoAd> {
 
     private final AdBatchProcessorService adBatchProcessorService;
 
     @Override
-    public AdRev process(VideoAd videoAd) throws Exception {
+    @Transactional
+    public VideoAd process(VideoAd videoAd) throws Exception {
 //        LocalDate startDate = LocalDate.now();
 //        LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = LocalDate.now().minusDays(2);
@@ -29,15 +33,9 @@ public class AdRevProcessor implements ItemProcessor<VideoAd, AdRev> {
         // 어제까지 총합
         int lastTotalView = (int) videoAd.getTotalAdView();
 
-        // 일 정산
-        double revenue = adBatchProcessorService.calculateRevenue(lastTotalView, adViewCount);
+        // videoAd 엔티티 업데이트
+        videoAd.setTotalAdView(lastTotalView + adViewCount);
 
-        // AdRev 객체에 값 설정
-        AdRev adRev = new AdRev();
-        adRev.setDate(endDate);
-        adRev.setVideoAdId(videoAd.getId());
-        adRev.setAdRevenue((long) revenue);
-
-        return adRev;
+        return videoAd;
     }
 }

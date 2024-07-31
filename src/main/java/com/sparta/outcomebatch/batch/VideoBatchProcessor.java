@@ -6,11 +6,14 @@ import com.sparta.outcomebatch.batch.domain.read.VideoReadRepository;
 import com.sparta.outcomebatch.batch.domain.write.VideoWriteRepository;
 import com.sparta.outcomebatch.batch.service.VideoBatchProcessorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class VideoBatchProcessor implements ItemProcessor<Video, VideoStats> {
@@ -20,26 +23,27 @@ public class VideoBatchProcessor implements ItemProcessor<Video, VideoStats> {
     private final VideoWriteRepository videoWriteRepository;
 
     @Override
+    @Transactional
     public VideoStats process(Video video) throws Exception {
-        LocalDate date = LocalDate.now();
-//        LocalDate date = LocalDate.of(2024, 7, 17);
+//        LocalDate startDate = LocalDate.now();
+//        LocalDate endDate = LocalDate.now().plusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(2);
+        LocalDate endDate = LocalDate.now().minusDays(1);
 
         // 오늘 계산값
-        int dailyView = videoBatchProcessorService.countVideoViewsExcludingUserAndDate(video, date);
-
-        // 어제까지 총합
-        int lastTotalView = video.getTotalVideoView();
-        video.setTotalVideoView(dailyView + lastTotalView);
-
-        // video 엔티티 업데이트
-        videoWriteRepository.save(video);
+        int dailyView = videoBatchProcessorService.countVideoViewsExcludingUserAndDate(video, startDate, endDate);
+//        // 확인을 위한 로그 추가
+//        log.info("Processing video: {} from {} to {}", video.getVidId(), startDate, endDate);
 
         // 플레이 시간 계산
-        Long playTime = videoBatchProcessorService.sumVideoViewDurationsExcludingUserAndDate(video, date);
+        Long playTime = videoBatchProcessorService.sumVideoViewDurationsExcludingUserAndDate(video, startDate, endDate);
+//        // 확인을 위한 로그 추가
+//        log.info("Calculated daily view count for video {}: {}", video.getVidId(), dailyView);
+//        log.info("Calculated play time for video {}: {}", video.getVidId(), playTime);
 
         // VideoStats 객체에 값 설정
         VideoStats videoStats = new VideoStats();
-        videoStats.setDate(date);
+        videoStats.setDate(endDate);
         videoStats.setVideoId(video.getVidId());
         videoStats.setVideoView(dailyView);
         videoStats.setPlayTime(playTime);

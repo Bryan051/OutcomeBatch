@@ -17,13 +17,13 @@ public class VideoBatchProcessorService {
 
     // video Stats
     @Transactional
-    public int countVideoViewsExcludingUserAndDate(Video video, LocalDate date) {
-        return videoViewReadRepository.countVideoViewsExcludingUserAndDate(video, date);
+    public int countVideoViewsExcludingUserAndDate(Video video, LocalDate startDate, LocalDate endDate) {
+        return videoViewReadRepository.countVideoViewsExcludingUserAndDate(video, startDate, endDate);
     }
 
     @Transactional
-    public Long sumVideoViewDurationsExcludingUserAndDate(Video video, LocalDate date) {
-        return videoViewReadRepository.sumVideoViewDurationsExcludingUserAndDate(video, date);
+    public Long sumVideoViewDurationsExcludingUserAndDate(Video video, LocalDate startDate, LocalDate endDate) {
+        return videoViewReadRepository.sumVideoViewDurationsExcludingUserAndDate(video, startDate, endDate);
     }
 
     public double calculateRevenue(int lastTotalView, int dailyView) {

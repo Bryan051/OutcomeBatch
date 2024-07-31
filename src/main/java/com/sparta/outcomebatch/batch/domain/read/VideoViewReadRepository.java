@@ -24,12 +24,12 @@ public interface VideoViewReadRepository extends JpaRepository<VideoView,Long> {
         돌아가는거 확인. video_stats 의 video_view 로 배치.
         이후 video 안의 total_video_view 누적조회수 갱신까지.
     */
-    @Query("SELECT COUNT(v) FROM VideoView v WHERE v.userId <> :#{#video.userId} AND v.vidId = :video AND FUNCTION('DATE', v.createdAt) = :date")
-    int countVideoViewsExcludingUserAndDate(@Param("video") Video video, @Param("date") LocalDate date);
+    @Query("SELECT COUNT(v) FROM VideoView v WHERE v.userId <> :#{#video.userId} AND v.vidId = :video AND v.createdAt >= :startDate AND v.createdAt < :endDate")
+    int countVideoViewsExcludingUserAndDate(@Param("video") Video video, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     // batch.videostats..play_time ->재생시간
-    @Query("SELECT SUM(v.duration) FROM VideoView v WHERE v.userId <> :#{#video.userId} AND v.vidId = :video AND FUNCTION('DATE', v.createdAt) = :date")
-    Long sumVideoViewDurationsExcludingUserAndDate(@Param("video") Video video, @Param("date") LocalDate date);
+    @Query("SELECT SUM(v.duration) FROM VideoView v WHERE v.userId <> :#{#video.userId} AND v.vidId = :video AND v.createdAt >= :startDate AND v.createdAt < :endDate")
+    Long sumVideoViewDurationsExcludingUserAndDate(@Param("video") Video video, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     // batch.video_rev..
     /*
