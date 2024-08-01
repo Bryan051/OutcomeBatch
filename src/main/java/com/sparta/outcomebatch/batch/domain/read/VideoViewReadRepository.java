@@ -41,8 +41,4 @@ public interface VideoViewReadRepository extends JpaRepository<VideoView,Long> {
 
 
 
-
-
-
-
 }

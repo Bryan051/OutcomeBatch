@@ -6,6 +6,7 @@ import com.sparta.outcomebatch.batch.domain.VideoAd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,11 +18,12 @@ public class AdRevProcessor implements ItemProcessor<VideoAd, AdRev> {
     private final AdBatchProcessorService adBatchProcessorService;
 
     @Override
+    @Transactional(transactionManager = "streamingTransactionManager", readOnly = true)
     public AdRev process(VideoAd videoAd) throws Exception {
 //        LocalDate startDate = LocalDate.now();
 //        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = LocalDate.now().minusDays(2);
-        LocalDate endDate = LocalDate.now().minusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(3);
+        LocalDate endDate = LocalDate.now().minusDays(2);
 
         // 오늘 계산값
         int adViewCount = adBatchProcessorService.countAdViewsByVideoAdAndDate(videoAd, startDate, endDate);

@@ -23,12 +23,12 @@ public class VideoBatchProcessor implements ItemProcessor<Video, VideoStats> {
     private final VideoWriteRepository videoWriteRepository;
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "streamingTransactionManager", readOnly = true)
     public VideoStats process(Video video) throws Exception {
 //        LocalDate startDate = LocalDate.now();
 //        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = LocalDate.now().minusDays(2);
-        LocalDate endDate = LocalDate.now().minusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(3);
+        LocalDate endDate = LocalDate.now().minusDays(2);
 
         // 오늘 계산값
         int dailyView = videoBatchProcessorService.countVideoViewsExcludingUserAndDate(video, startDate, endDate);

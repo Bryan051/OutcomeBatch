@@ -84,7 +84,7 @@ public class VideoJobConfig {
                                      VideoPartitioner videoPartitioner) {
         return new StepBuilder("videoStatsMasterStep", jobRepository)
                 .partitioner("videoStatsSlaveStep", videoPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(videoStatsSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();
@@ -96,7 +96,7 @@ public class VideoJobConfig {
                                    VideoPartitioner videoPartitioner) {
         return new StepBuilder("videoRevMasterStep", jobRepository)
                 .partitioner("videoRevSlaveStep", videoPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(videoRevSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();
@@ -108,7 +108,7 @@ public class VideoJobConfig {
                                       VideoPartitioner videoPartitioner) {
         return new StepBuilder("videoUpdateMasterStep", jobRepository)
                 .partitioner("videoUpdateSlaveStep", videoPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(videoUpdateSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();

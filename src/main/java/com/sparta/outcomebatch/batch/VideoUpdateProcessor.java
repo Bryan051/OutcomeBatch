@@ -21,12 +21,12 @@ public class VideoUpdateProcessor implements ItemProcessor<Video, Video> {
     private final VideoBatchProcessorService videoBatchProcessorService;
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "batchTransactionManager", readOnly = true)
     public Video process(Video video) throws Exception {
 //        LocalDate startDate = LocalDate.now();
 //        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = LocalDate.now().minusDays(2);
-        LocalDate endDate = LocalDate.now().minusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(3);
+        LocalDate endDate = LocalDate.now().minusDays(2);
 
         // 비디오 엔티티 업데이트 로직
         int dailyView = videoBatchProcessorService.countVideoViewsExcludingUserAndDate(video, startDate, endDate);

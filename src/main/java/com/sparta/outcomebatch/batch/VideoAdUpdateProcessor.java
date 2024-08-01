@@ -20,12 +20,12 @@ public class VideoAdUpdateProcessor implements ItemProcessor<VideoAd, VideoAd> {
     private final AdBatchProcessorService adBatchProcessorService;
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "batchTransactionManager")
     public VideoAd process(VideoAd videoAd) throws Exception {
 //        LocalDate startDate = LocalDate.now();
 //        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = LocalDate.now().minusDays(2);
-        LocalDate endDate = LocalDate.now().minusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(3);
+        LocalDate endDate = LocalDate.now().minusDays(2);
 
         // 오늘 계산값
         int adViewCount = adBatchProcessorService.countAdViewsByVideoAdAndDate(videoAd, startDate, endDate);

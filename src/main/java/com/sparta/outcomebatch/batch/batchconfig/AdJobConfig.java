@@ -79,7 +79,7 @@ public class AdJobConfig {
                                      VideoAdPartitioner videoAdPartitioner) {
         return new StepBuilder("adStatsMasterStep", jobRepository)
                 .partitioner("adStatsSlaveStep", videoAdPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(adStatsSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();
@@ -91,7 +91,7 @@ public class AdJobConfig {
                                   VideoAdPartitioner videoAdPartitioner) {
         return new StepBuilder("adRevMasterStep", jobRepository)
                 .partitioner("adRevSlaveStep", videoAdPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(adRevSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();
@@ -103,7 +103,7 @@ public class AdJobConfig {
                                 VideoAdPartitioner videoAdPartitioner) {
         return new StepBuilder("adStatsMasterStep", jobRepository)
                 .partitioner("adStatsSlaveStep", videoAdPartitioner)
-                .gridSize(8)
+                .gridSize(14)
                 .step(videoAdUpdateSlaveStep)
                 .taskExecutor(taskExecutor)
                 .build();
